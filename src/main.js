@@ -330,7 +330,6 @@ class ThermalPrinterStatus {
 
 		this._polling = setInterval(() => {
 			if (this._connected) {			
-
 				if (this._language == 'star-prnt') {
 					if (this._pollForBarcodes) {
 						this.send([ 0x1b, 0x1d, 0x42, 0x32 ]);		/* ESC GS B 2 = Get barcode scanner buffer */
@@ -349,7 +348,7 @@ class ThermalPrinterStatus {
 
 				if (this._language == 'esc-pos') {
 					if (this._pollForUpdates) {
-						this.send([ 0x10, 0x14, 0x07, 0x01 ]);		/* DLE DC4 7 1 = Request ASB */
+						this.send([ 0x1d, 0x61, 1 + 2 + 4 + 8 + 64 ]);
 					}
 				}
 			}
