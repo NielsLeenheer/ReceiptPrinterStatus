@@ -4,7 +4,7 @@ This is an library that allows you to get the status information back from StarP
 
 ## What does this library do?
 
-Connect this library to `WebUSBReceiptPrinter` or `WebSerialReceiptPrinter` to enable two-way communication between your app and a receipt printer. You can request basic printer info and get events when something happens with the printer, such as when the cash drawer is opened or closed, or it is running out of paper. 
+Connect this library to `WebUSBReceiptPrinter`, `WebSerialReceiptPrinter`, `WebBluetoothReceiptPrinter`, or `NetworkReceiptPrinter` to enable two-way communication between your app and a receipt printer. You can request basic printer info and get events when something happens with the printer, such as when the cash drawer is opened or closed, or it is running out of paper. 
 
 Additionally, if you use a barcode scanner connected to a Star receipt printer, this library will enable you to get an event everytime a barcode is scanned, similar to `WebHidBarcodeScanner` or `WebSerialBarcodeScanner`.
 
@@ -23,7 +23,9 @@ Or import the `thermal-printer-status.esm.js` module:
 
 ## Connecting to a receipt printer
 
-This library uses the `WebUSBReceiptPrinter` or `WebSerialReceiptPrinter` library to communicate with the printer. See the documentation of that library to connect to the receipt printer. During the `connected` event you get from that library you can set up `ThermalPrinterStatus`.
+This library uses the `WebUSBReceiptPrinter`, `WebSerialReceiptPrinter`, `WebBluetoothReceiptPrinter`, or `NetworkReceiptPrinter` library to communicate with the printer. See the documentation of those libraries for examples of how to connect to the receipt printer. All these libraries work in a very similar way. In all cases you instantiate the object, then call the `connect()` function to connect to the printer. Once connected, you get back a `connected` event which you can use to set up `ThermalPrinterStatus`.
+
+For example:
 
 
     const receiptPrinter = new WebUSBReceiptPrinter();
