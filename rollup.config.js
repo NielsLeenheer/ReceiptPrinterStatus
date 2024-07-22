@@ -9,6 +9,7 @@ export default [
 		output: {
 			name: 'ThermalPrinterStatus',
 			file: 'dist/thermal-printer-status.umd.js',
+			sourcemap: true,
 			format: 'umd'
 		},
 		plugins: [
@@ -24,6 +25,7 @@ export default [
 		input: 'src/main.js',
 		output: { 
 			file: 'dist/thermal-printer-status.esm.js', 
+			sourcemap: true,
 			format: 'es' 
 		},
 		plugins: [
