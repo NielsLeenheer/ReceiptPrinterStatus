@@ -21,7 +21,7 @@ class ThermalPrinterStatus {
 			throw new Error('You need to provide a printer driver instance');
 		}
 
-		if (! (options.printer instanceof WebUSBReceiptPrinter || options.printer instanceof WebSerialReceiptPrinter)) {
+		if (Object.getPrototypeOf(options.printer).constructor.name == 'ReceiptPrinter') {
 			throw new Error('Printer driver not supported by this library');
 		}
 	
