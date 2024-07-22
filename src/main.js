@@ -70,12 +70,20 @@ class ThermalPrinterStatus {
 		this.initialize();
 	}
 
-	initialize() {
+	async initialize() {
 
 		/* Handle responses from the printer */
 
 		this._internal.printer.addEventListener('data', (data) => this.receive(data));
-		this._internal.printer.listen();
+		
+		let listening = await this._internal.printer.listen();
+
+		if (!listening) {	
+			this._internal.emitter.emit('unsupported');
+			return;
+		}
+
+		/* Handle disconnections */
 
 		this._internal.printer.addEventListener('disconnected', () => {
 			if (this._polling) {
