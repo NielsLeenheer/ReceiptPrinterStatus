@@ -176,6 +176,11 @@ class ThermalPrinterStatus {
 
 		/* DLE DC4 7 1 = Request ASB */
 		this.send([ 0x10, 0x14, 0x07, 0x01 ]);
+
+		if (this._internal.polling === true) {
+			this._pollForUpdates = true;
+			this.poll();
+		}
 	}
 
 
