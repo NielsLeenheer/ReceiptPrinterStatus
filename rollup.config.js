@@ -14,7 +14,9 @@ export default [
 		plugins: [
 			resolve(), 
 			commonjs(),
-            terser() 
+            terser({ 
+				keep_classnames: true
+			}) 
 		]
 	},
 
@@ -27,7 +29,9 @@ export default [
 		plugins: [
 			resolve(),
 			commonjs(),
-            terser()
+            terser({ 
+				keep_classnames: true
+			}) 
 		]
 	}
 ];
