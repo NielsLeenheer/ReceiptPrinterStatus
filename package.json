@@ -1,18 +1,18 @@
 {
-  "name": "thermal-printer-status",
-  "version": "1.0",
+  "name": "@point-of-sale/receipt-printer-status",
+  "version": "2.0",
   "type": "module",
   "exports": {
       "browser": {
-          "import": "./dist/thermal-printer-status.esm.js",
-          "require": "./dist/thermal-printer-status.umd.js",
-          "script": "./dist/thermal-printer-status.umd.js"
+          "import": "./dist/receipt-printer-status.esm.js",
+          "require": "./dist/receipt-printer-status.umd.js",
+          "script": "./dist/receipt-printer-status.umd.js"
       }
   },
   "module": "src/main.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NielsLeenheer/ThermalPrinterStatus.git"
+    "url": "git+https://github.com/NielsLeenheer/ReceiptPrinterStatus.git"
   },
   "keywords": [
     "usb",
@@ -26,9 +26,9 @@
   "author": "Niels Leenheer",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/NielsLeenheer/ThermalPrinterStatus/issues"
+    "url": "https://github.com/NielsLeenheer/ReceiptPrinterStatus/issues"
   },
-  "homepage": "https://github.com/NielsLeenheer/ThermalPrinterStatus#readme",
+  "homepage": "https://github.com/NielsLeenheer/ReceiptPrinterStatus#readme",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",

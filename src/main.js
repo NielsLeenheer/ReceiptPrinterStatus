@@ -1,12 +1,12 @@
 import EventEmitter from "./event-emitter.js";
 import ResponseBuffer from "./response-buffer.js";
 import ChangeObserver from "./change-observer.js";
-import ThermalPrinterInfo from "./info.js";
-import ThermalPrinterBarcodeScanner from "./barcode-scanner.js";
-import ThermalPrinterCashDrawer from "./cash-drawer.js";
+import ReceiptPrinterInfo from "./info.js";
+import ReceiptPrinterBarcodeScanner from "./barcode-scanner.js";
+import ReceiptPrinterCashDrawer from "./cash-drawer.js";
 
 
-class ThermalPrinterStatus {
+class ReceiptPrinterStatus {
 
 	constructor(options) {
         this._connected = false;
@@ -44,7 +44,7 @@ class ThermalPrinterStatus {
             decoder:    new TextDecoder(),       
 			buffer:		new ResponseBuffer(),
 			status:	 	ChangeObserver.create({
-							target:		new ThermalPrinterInfo, 
+							target:		new ReceiptPrinterInfo, 
 							callback: 	target => {
 								this._internal.emitter.emit('update', target)
 							}
@@ -62,8 +62,8 @@ class ThermalPrinterStatus {
             }
         };
 
-		this.barcodeScanner = new ThermalPrinterBarcodeScanner(this);
-		this.cashDrawer = new ThermalPrinterCashDrawer(this);
+		this.barcodeScanner = new ReceiptPrinterBarcodeScanner(this);
+		this.cashDrawer = new ReceiptPrinterCashDrawer(this);
 
 		/* Initialize the printer */
 
@@ -627,4 +627,4 @@ class ThermalPrinterStatus {
 	}
 }
 
-export default ThermalPrinterStatus;
+export default ReceiptPrinterStatus;

@@ -1,4 +1,4 @@
-class ThermalPrinterInfo {
+class ReceiptPrinterInfo {
 	buttonPressed = false;
     online = true;
     coverOpened = false;
@@ -6,4 +6,4 @@ class ThermalPrinterInfo {
     paperLow = false;
 }
 
-export default ThermalPrinterInfo;
+export default ReceiptPrinterInfo;

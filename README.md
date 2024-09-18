@@ -1,4 +1,4 @@
-# ThermalPrinterStatus
+# ReceiptPrinterStatus
 
 This is an library that allows you to get the status information back from StarPRNT and ESC/POS printers.
 
@@ -11,19 +11,19 @@ Additionally, if you use a barcode scanner connected to a Star receipt printer, 
 
 ## How to use it?
 
-Load the `thermal-printer-status.umd.js` file from the `dist` directory in the browser and instantiate a `ThermalPrinterStatus` object. 
+Load the `receipt-printer-status.umd.js` file from the `dist` directory in the browser and instantiate a `ReceiptPrinterStatus` object. 
 
-    <script src='thermal-printer-status.umd.js'></script>
+    <script src='receipt-printer-status.umd.js'></script>
 
-Or import the `thermal-printer-status.esm.js` module:
+Or import the `receipt-printer-status.esm.js` module:
 
-    import ThermalPrinterStatus from 'thermal-printer-status.esm.js';
+    import ReceiptPrinterStatus from 'receipt-printer-status.esm.js';
 
 
 
 ## Connecting to a receipt printer
 
-This library uses the `WebUSBReceiptPrinter`, `WebSerialReceiptPrinter`, `WebBluetoothReceiptPrinter`, or `NetworkReceiptPrinter` library to communicate with the printer. See the documentation of those libraries for examples of how to connect to the receipt printer. All these libraries work in a very similar way. In all cases you instantiate the object, then call the `connect()` function to connect to the printer. Once connected, you get back a `connected` event which you can use to set up `ThermalPrinterStatus`.
+This library uses the `WebUSBReceiptPrinter`, `WebSerialReceiptPrinter`, `WebBluetoothReceiptPrinter`, or `NetworkReceiptPrinter` library to communicate with the printer. See the documentation of those libraries for examples of how to connect to the receipt printer. All these libraries work in a very similar way. In all cases you instantiate the object, then call the `connect()` function to connect to the printer. Once connected, you get back a `connected` event which you can use to set up `ReceiptPrinterStatus`.
 
 For example:
 
@@ -38,16 +38,16 @@ For example:
 
         /* Initialize the library and connect it to our printer */
 
-        const printerStatus = new ThermalPrinterStatus({
+        const printerStatus = new ReceiptPrinterStatus({
             printer:    receiptPrinter,
             language:   device.language
         });
     });
 
 
-After initializing `ThermalPrinterStatus`, it will attempt to talk to the printer and exchange some basic information. If that succeeds the library will send a `connected` event of its own as a signal that you are able to use the libary. 
+After initializing `ReceiptPrinterStatus`, it will attempt to talk to the printer and exchange some basic information. If that succeeds the library will send a `connected` event of its own as a signal that you are able to use the libary. 
 
-        const printerStatus = new ThermalPrinterStatus({
+        const printerStatus = new ReceiptPrinterStatus({
             printer:    receiptPrinter,
             language:   device.language
         });
@@ -85,22 +85,22 @@ If at any time you want to check if the libary is connected to the printer you c
 
 ## Printer language
 
-When instantiating the `ThermalPrinterStatus` object, we need to provide the language of the printer. Depending on the language of the printer, the library needs to send different commands to the printer.
+When instantiating the `ReceiptPrinterStatus` object, we need to provide the language of the printer. Depending on the language of the printer, the library needs to send different commands to the printer.
 
 If your printer supports StarPRNT, you set the language to 'star-print'. If it supports Star Line commands, set it to 'star-line'. If your printer supports ESC/POS, set it to 'esc-pos'. In practice, it does not matter if you specify 'star-prnt' or 'star-line'. Both are extremely similar and during initialisation the printer will send back information about which it supports and set the correct language.
 
-        const printerStatus = new ThermalPrinterStatus({
+        const printerStatus = new ReceiptPrinterStatus({
             printer:    receiptPrinter,
             language:   'esc-pos'
         });
 
-The `WebUSBReceiptPrinter` gives us back the language that we need to initialze `ThermalPrinterStatus` in the `connected` callback based on the manufacturer, product id and product name of the printer that is selected. But that information is not available to printers connected to the serial port, so `WebSerialReceiptPrinter` does not provide a language at all. 
+The `WebUSBReceiptPrinter` gives us back the language that we need to initialze `ReceiptPrinterStatus` in the `connected` callback based on the manufacturer, product id and product name of the printer that is selected. But that information is not available to printers connected to the serial port, so `WebSerialReceiptPrinter` does not provide a language at all. 
 
     receiptPrinter.addEventListener('connected', device => {
 
         /* Initialize the library and connect it to our printer */
 
-        const printerStatus = new ThermalPrinterStatus({
+        const printerStatus = new ReceiptPrinterStatus({
             printer:    receiptPrinter,
             language:   device.language
         });
@@ -108,10 +108,10 @@ The `WebUSBReceiptPrinter` gives us back the language that we need to initialze 
 
 If no language is provided, the library will attempt to detect the language of the printer by sending it one command in ESC/POS and one in StarPRNT. Depending on the response by the printer the library can tell which command was successful and which language it supports. 
 
-After the `connected` callback function is called, the actual detected language of the printer is can be determined from the `language` property. This value can be used to instantiate the `ThermalPrinterEncoder` library to encode and send data to the printer.
+After the `connected` callback function is called, the actual detected language of the printer is can be determined from the `language` property. This value can be used to instantiate the `ReceiptPrinterEncoder` library to encode and send data to the printer.
 
         printerStatus.addEventListener('connected', () => {
-            let encoder = new ThermalPrinterEncoder({
+            let encoder = new ReceiptPrinterEncoder({
                 language: printerStatus.language
             })
         });
@@ -132,7 +132,7 @@ To get the current status you can look at the `status` property.
             console.log('The printer cover is', status.coverOpened ? 'open' : 'closed');
         }
 
-The `status` property contains a `ThermalPrinterInfo` object which has the following properties:
+The `status` property contains a `ReceiptPrinterInfo` object which has the following properties:
 
 -   `online`<br>
     The printer is online and can accept jobs to print
@@ -154,7 +154,7 @@ You can also be notified when any of these properties change by adding an event 
             });
         }
 
-This event is called whenever there is a change to one of the properties of the `ThermalPrinterInfo` object. In some cases a single action will trigger multiple events. For example, when the cover of the printer is opened, you will get an update because `coverOpened` will have changed, but also another update because the opening the cover will also set the `online` property to false. For convenience, the `ThermalPrinterInfo` object will be provided to the callback function as a parameter.
+This event is called whenever there is a change to one of the properties of the `ReceiptPrinterInfo` object. In some cases a single action will trigger multiple events. For example, when the cover of the printer is opened, you will get an update because `coverOpened` will have changed, but also another update because the opening the cover will also set the `online` property to false. For convenience, the `ReceiptPrinterInfo` object will be provided to the callback function as a parameter.
 
 
 ## Query the printer for information
@@ -188,7 +188,7 @@ Please note that not all printers support every type of information. Some printe
 
 ## Cash drawer
 
-Most receipt printers have a DK port, which you can use to connect a cash drawer. The printer can send a signal over the DK port to open the drawer and can detect if the drawer has been opened or closed. This library gives you access to this functionality using the `ThermalPrinterCashDrawer` object on the `cashDrawer` property. 
+Most receipt printers have a DK port, which you can use to connect a cash drawer. The printer can send a signal over the DK port to open the drawer and can detect if the drawer has been opened or closed. This library gives you access to this functionality using the `ReceiptPrinterCashDrawer` object on the `cashDrawer` property. 
 
 To open the drawer you can call the `open()` function:
 
@@ -215,7 +215,7 @@ And finally, you can listen for changes to the state of the cash drawer:
 
 ## Barcode scanners
 
-If your printer supports connecting a barcode scanner, you can also use this libary get access to the barcode scanner. This works very similar to the `WebHidBarcodeScanner` and `WebSerialBarcodeScanner` libraries, but instead of connecting directly to the barcode scanner, you would get the information from the printer instead. To get access to the barcode scanner, you can use the `ThermalPrinterBarcodeScanner` object which is available on the `barcodeScanner` property.
+If your printer supports connecting a barcode scanner, you can also use this libary get access to the barcode scanner. This works very similar to the `WebHidBarcodeScanner` and `WebSerialBarcodeScanner` libraries, but instead of connecting directly to the barcode scanner, you would get the information from the printer instead. To get access to the barcode scanner, you can use the `ReceiptPrinterBarcodeScanner` object which is available on the `barcodeScanner` property.
 
 If you want to know if a barcode scanner is supported by you printer, you can look at the `supported` property.
 
@@ -229,7 +229,7 @@ If you want to know if a barcode scanner is actually connected to your printer, 
         console.log('Barcode scanner is connected and waiting to scan...');
     }
 
-Please note, that the `supported` and `connected` properties are not immediate available. You cannot rely on it immediately after instantiating the `ThermalPrinterStatus` object. The libarary first connects to the printer and calls the `connected` event listener on the main object. Then it will asynchronously try to detect barcode scanner support. If it is supported, it will start polling for barcodes and finally it will call its own `connected` event listener. 
+Please note, that the `supported` and `connected` properties are not immediate available. You cannot rely on it immediately after instantiating the `ReceiptPrinterStatus` object. The libarary first connects to the printer and calls the `connected` event listener on the main object. Then it will asynchronously try to detect barcode scanner support. If it is supported, it will start polling for barcodes and finally it will call its own `connected` event listener. 
 
     printerStatus.barcodeScanner.addEventListener('connected', () => {                
         console.log('Barcode scanner is connected and waiting to scan...');

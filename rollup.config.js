@@ -7,8 +7,8 @@ export default [
 	{
 		input: 'src/main.js',
 		output: {
-			name: 'ThermalPrinterStatus',
-			file: 'dist/thermal-printer-status.umd.js',
+			name: 'ReceiptPrinterStatus',
+			file: 'dist/receipt-printer-status.umd.js',
 			sourcemap: true,
 			format: 'umd'
 		},
@@ -24,7 +24,7 @@ export default [
 	{
 		input: 'src/main.js',
 		output: { 
-			file: 'dist/thermal-printer-status.esm.js', 
+			file: 'dist/receipt-printer-status.esm.js', 
 			sourcemap: true,
 			format: 'es' 
 		},

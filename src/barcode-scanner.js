@@ -1,6 +1,6 @@
 import EventEmitter from "./event-emitter.js";
 
-class ThermalPrinterBarcodeScanner {
+class ReceiptPrinterBarcodeScanner {
 	#printer;
 	#emitter;
 	#connected = false;
@@ -41,4 +41,4 @@ class ThermalPrinterBarcodeScanner {
 	}
 }
 
-export default ThermalPrinterBarcodeScanner;
+export default ReceiptPrinterBarcodeScanner;

@@ -1,6 +1,6 @@
 import EventEmitter from "./event-emitter.js";
 
-class ThermalPrinterCashDrawer {
+class ReceiptPrinterCashDrawer {
 	#printer;
 	#emitter;
 	#opened = false;
@@ -51,4 +51,4 @@ class ThermalPrinterCashDrawer {
 	}
 }
 
-export default ThermalPrinterCashDrawer;
+export default ReceiptPrinterCashDrawer;
