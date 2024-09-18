@@ -21,7 +21,7 @@ class ReceiptPrinterStatus {
 			throw new Error('You need to provide a printer driver instance');
 		}
 
-		if (Object.getPrototypeOf(options.printer).constructor.name == 'ReceiptPrinter') {
+		if (Object.getPrototypeOf(options.printer).constructor.name == 'ReceiptPrinterDriver') {
 			throw new Error('Printer driver not supported by this library');
 		}
 	
