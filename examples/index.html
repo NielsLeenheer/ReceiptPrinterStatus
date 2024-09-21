@@ -1,0 +1,365 @@
+<meta charset="UTF-8">
+
+<script src="../dist/receipt-printer-status.umd.js"></script>
+<script src="https://unpkg.com/@point-of-sale/receipt-printer-encoder/dist/receipt-printer-encoder.umd.js"></script>
+<script src="https://unpkg.com/@point-of-sale/webbluetooth-receipt-printer/dist/webbluetooth-receipt-printer.umd.js"></script>
+<script src="https://unpkg.com/@point-of-sale/webusb-receipt-printer/dist/webusb-receipt-printer.umd.js"></script>
+<script src="https://unpkg.com/@point-of-sale/webserial-receipt-printer/dist/webserial-receipt-printer.umd.js"></script>
+
+<script>
+
+console.hex = (d) => console.log((Object(d).buffer instanceof ArrayBuffer ? new Uint8Array(d.buffer) : 
+typeof d === 'string' ? (new TextEncoder('utf-8')).encode(d) : 
+new Uint8ClampedArray(d)).reduce((p, c, i, a) => p + (i % 16 === 0 ? i.toString(16).padStart(6, 0) + '  ' : ' ') + 
+c.toString(16).padStart(2, 0) + (i === a.length - 1 || i % 16 === 15 ? 
+' '.repeat((15 - i % 16) * 3) + Array.from(a).splice(i - i % 16, 16).reduce((r, v) => 
+r + (v > 31 && v < 127 || v > 159 ? String.fromCharCode(v) : '.'), '  ') + '\n' : ''), ''));
+
+
+    let receiptPrinter;
+    let printerStatus;
+    let encoder;
+
+    let productName = '';
+    let manufacturerName = '';
+
+
+    function changeDriver() {
+        let method = document.getElementById('driver').value;
+        document.getElementById('baudrate').hidden = method !== 'serial';
+    }
+
+    function connect() {
+        let method = document.getElementById('driver').value;
+
+        if (method === 'usb') {
+            receiptPrinter = new WebUSBReceiptPrinter();
+        }
+
+        if (method === 'serial') {
+            let baudRate = parseInt(document.getElementById('baudrate').value, 10);
+
+            receiptPrinter = new WebSerialReceiptPrinter({
+                baudRate: baudRate,
+            });
+        }
+
+        if (method === 'bluetooth') {
+            receiptPrinter = new WebBluetoothReceiptPrinter();
+        }
+
+        receiptPrinter.addEventListener('connected', device => connected(device));
+        receiptPrinter.connect();
+    }
+
+    function disconnect() {
+        receiptPrinter.disconnect();
+
+        document.getElementById('driver').disabled = false;
+        document.getElementById('baudrate').disabled = false;
+        document.getElementById('connect').hidden = false;
+        document.getElementById('disconnect').hidden = true;
+        document.getElementById('kick').disabled = true;
+        document.getElementById('print').disabled = true;        
+    }
+
+    function kick() {
+        if (encoder) {
+            printerStatus.cashDrawer.open();
+        }
+    }
+
+    function print() {
+        if (encoder) {
+            encoder
+                .newline()
+                .newline()
+                .newline()
+                .line('manufacturerName: ' + manufacturerName)
+                .line('productName: ' + productName)
+                .newline()
+                .newline()
+                .line('|- 32 -------------------------|')
+                .line('|- 35 ----------------------------|')
+                .line('|- 42 -----------------------------------|')
+                .line('|- 48 -----------------------------------------|')
+                .newline()
+                .newline()
+                .line('Fonts:')
+                .font('A').text('Font A: abcedfghijklmnopqrstuvwxyz1234567890').newline()
+                .font('B').text('Font B: abcedfghijklmnopqrstuvwxyz1234567890').newline()
+                .font('A')
+                .newline()
+                .line('Width:')
+                .width(1).text('1: abcdefghijkl').width(1).newline()
+                .width(2).text('2: abcdefghijkl').width(1).newline()
+                .width(3).text('3: abcdefghijkl').width(1).newline()
+                .width(4).text('4: abcdefghijkl').width(1).newline()
+                .newline()
+                .line('Height:')
+                .height(1).text('1: abcdefghijkl').height(1).newline()
+                .height(2).text('2: abcdefghijkl').height(1).newline()
+                .height(3).text('3: abcdefghijkl').height(1).newline()
+                .height(4).text('4: abcdefghijkl').height(1).newline()
+                .newline()
+                .line('Width + Height:')
+                .size(1).text('1: abcdefghijkl').size(1).newline()
+                .size(2).text('2: abcdefghijkl').size(1).newline()
+                .size(3).text('3: abcdefghijkl').size(1).newline()
+                .size(4).text('4: abcdefghijkl').size(1).newline()
+                .newline()
+                .newline();
+            
+            encoder
+                .line('EAN13:')
+                .barcode('123456789012', 'ean13', 60)
+                .newline()
+
+            encoder
+                .line('EAN8:')
+                .barcode('12345678', 'ean8', 60)
+                .newline()   
+
+            encoder
+                .line('UPC:')
+                .barcode('12345678901', 'upca', 60)
+                .newline()        
+
+            encoder
+                .line('Code 39:')
+                .barcode('1234ABCDEF$', 'code39', 60)
+                .newline()      
+
+            if (encoder.language === 'escpos') {
+                encoder
+                    .line('Codabar:')
+                    .barcode('1234ABCDEF$', 'codabar', 60)
+                    .newline()        
+            }
+
+            encoder
+                .line('Code 93:')
+                .barcode('1234ABCDEF', 'code93', 60)
+                .newline()       
+
+            encoder
+                .line('Code 128:')
+                .barcode('12345678', 'code128', 60)
+                .newline()            
+
+            encoder
+                .line('ITF:')
+                .barcode('12345678', 'itf', 60)
+                .newline()            
+
+            encoder
+                .line('QR code:')
+                .align('center')
+                .qrcode('https://nielsleenheer.com')
+                .align('left')
+                .newline()
+                .newline()
+
+            encoder
+                .line('Cutter:')
+                .line('how many lines we need to feed before cutting')
+                .line('8 -------------------------')
+                .line('7 -------------------------')
+                .line('6 -------------------------')
+                .line('5 -------------------------')
+                .line('4 -------------------------')
+                .line('3 -------------------------')
+                .line('2 -------------------------')
+                .line('1 -------------------------')
+                .cut()
+                .newline()
+                .newline()
+                .newline()
+                .newline()
+                .newline()
+                .newline()
+                .newline()
+                .newline()
+                .newline()
+                .newline()
+                .cut()
+
+            receiptPrinter.print(encoder.encode());
+        }
+    }
+    
+    function connected(device) {
+        console.log('Connected to', device);
+
+        manufacturerName = device.manufacturerName || ''
+        productName = device.productName || '';
+
+        document.getElementById('driver').disabled = true;
+        document.getElementById('baudrate').disabled = true;
+        document.getElementById('connect').hidden = true;
+        document.getElementById('disconnect').hidden = false;
+        document.getElementById('kick').disabled = false;
+        document.getElementById('print').disabled = false;
+
+
+        if (device.language) {
+            encoder = new ReceiptPrinterEncoder({
+                language:   device.language,
+            })
+        }
+
+        /* Initialize status */
+
+        printerStatus = new ReceiptPrinterStatus({
+            printer:    receiptPrinter,
+            language:   device.language,
+            polling:    true,
+        });
+
+        /* Wait until we have confirmation that have two-way communication */
+
+        printerStatus.addEventListener('connected', async () => {
+
+            console.log('Printer status connected!');
+
+            /* We've got confirmation of the language, so we can now initialize the encoder */
+
+            encoder = new ReceiptPrinterEncoder({
+                language:   printerStatus.language,
+            })
+
+            // receiptPrinter.print(encoder.initialize().encode());
+
+            
+            /* Get printer status, and subscribe to updates */
+
+            console.log(printerStatus.status);
+
+            let status = document.getElementById('status');
+            status.innerText = JSON.stringify(printerStatus.status, null, 4);
+
+            printerStatus.addEventListener('update', data => {
+                status.innerText = JSON.stringify(data, null, 4);
+            });
+
+            /* Read printer information */
+
+            let data = { 
+                manufacturer: await printerStatus.query('manufacturer'),
+                model: await printerStatus.query('model'),
+                firmware: await printerStatus.query('firmware'),
+                serialnumber: await printerStatus.query('serialnumber'),
+                fonts: await printerStatus.query('fonts'),
+                language: printerStatus.language,
+            };        
+
+            let output = document.getElementById('output');
+            output.innerText = JSON.stringify(data, null, 4);
+        });
+
+        printerStatus.addEventListener('disconnected', async () => {
+            console.log('disconnected!')
+        });
+
+        printerStatus.addEventListener('unsupported', async () => {
+            console.log('Printer does not support two-way communication!')
+        });
+
+
+        /* Barcode scanner */
+
+        console.log(printerStatus.barcodeScanner);
+
+        console.log('barcode scanner support:', printerStatus.barcodeScanner.supported);
+
+        printerStatus.barcodeScanner.addEventListener('connected', async () => {
+            console.log('barcode scanner connected!');
+        });
+
+        printerStatus.barcodeScanner.addEventListener('barcode', data => {
+            console.log('barcode scanned:', data);
+            // receiptPrinter.print(encoder.newline().line('Barcode scanned').newline().barcode(data.value, 'ean13', 60).newline().newline().encode());
+        });
+
+
+        /* Cash drawer */
+
+        console.log(printerStatus.cashDrawer);
+
+        printerStatus.cashDrawer.addEventListener('update', async status => {
+            console.log('cash drawer status changed:', status);
+        });
+
+        printerStatus.cashDrawer.addEventListener('open', async () => {
+            console.log('cash drawer opened');
+        });
+
+        printerStatus.cashDrawer.addEventListener('close', async () => {
+            console.log('cash drawer closed');
+        });
+
+
+    }
+
+</script>
+
+<style>
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        display: flex;
+        background: #eee;
+        padding: 0.6em 1em;
+    }
+    header * {
+        margin-right: 1em;
+    }
+
+    main {
+        padding: 1em;
+    }
+
+    h1 > div {
+        display: inline-block;
+        width: 16px;
+        overflow-x: hidden;
+    }
+
+    #output:not(:empty) {
+        border-top: 1px solid #ccc;
+    }
+
+    #status:not(:empty) {
+        border-top: 1px solid #ccc;
+    }
+
+</style>
+
+<header>
+    <select id="driver" onchange="changeDriver()">
+        <option value="usb" selected>USB</option>
+        <option value="serial">Serial</option>
+        <option value="bluetooth">Bluetooth</option>
+    </select>
+
+    <select id="baudrate" hidden>
+        <option value="9600" selected>9600</option>
+        <option value="38400">38400</option>
+        <option value="115200">115200</option>
+    </select>
+
+    <button id="connect" onclick="connect()">Connect</button>
+    <button id="disconnect" onclick="disconnect()" hidden>Disconnect</button>
+</header>
+
+
+<main>
+    <button id="kick" onclick="kick()" disabled>Kick</button>
+    <button id="print" onclick="print()" disabled>Print</button>
+    <pre id="output"></pre>
+    <pre id="status"></pre>
+</main>
